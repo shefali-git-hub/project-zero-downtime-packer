@@ -1,0 +1,54 @@
+{
+  "variables": {
+    "aws_access_key":"AKIAXH73WBOKPXDZJWFY",
+   "aws_secret_key": "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",
+    "region"       : "ap-south-1",
+	"base_ami_id"   : "ami-028b3bf1662e6082f" //TBC
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{ user `aws_access_key` }}",
+      "secret_key": "{{ user `aws_secret_key` }}",
+      "region": "{{ user `region` }}",
+      "instance_type": "t2.micro",
+      "source_ami": "{{user `base_ami_id`}}",
+      "ami_name": "packer-demo-{{timestamp}}",
+      "user_data_file": "./scripts/bootstrap_win.txt",
+      "communicator": "winrm",
+      "winrm_username": "Administrator",
+	 "tags": {
+	"Name" : "aws-dev-blue-green-deployment-ami"
+   }
+   }
+  ],
+  "provisioners": [
+  
+    {
+      "type": "file",
+      "source": "puppet",
+      "destination": "C:\\"
+    },
+	{
+      "type": "file",
+      "source": "scripts/installables.ps1",
+      "destination": "C:\\Users\\Administrator\\install_programs.ps1"
+    },
+    {
+      "type": "file",
+      "source": "scripts/installables.json",
+      "destination": "C:\\Users\\Administrator\\softwareToInstall.json"
+    },
+    {
+      "type": "powershell",
+      "inline": ["Powershell -NonInteractive -File \"C:\\Users\\Administrator\\install_programs.ps1\" -json \"C:\\Users\\Administrator\\softwareToInstall.json\""]
+    },
+	{
+    "type": "powershell",
+    "inline": [
+        "C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/InitializeInstance.ps1 -Schedule",
+        "C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/SysprepInstance.ps1 -NoShutdown"
+    ]
+}
+  ]
+}
