@@ -1,0 +1,18 @@
+{
+    "config": {
+        "downloadLocation": "c:\\Installables"
+     },
+    "software": [
+    {
+        "name": "Puppet",
+        "description" : "Puppet Agent for Windows",
+        "url": "https://downloads.puppetlabs.com/windows/puppet5/puppet-agent-x64-latest.msi",
+        "arguments" : " /qn /norestart",
+        "path": "C:\\Program Files\\Puppet",
+        "cookie": null,
+        "downloadOnlyTo" : null,
+        "type" : null,
+        "executeAfter" : null
+    }
+    ]
+}
